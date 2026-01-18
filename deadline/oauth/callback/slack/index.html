@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeadLine - Connecting to Slack...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #4A154B 0%, #611f69 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 2rem auto;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .error {
+            background: rgba(255, 59, 48, 0.2);
+            border: 1px solid rgba(255, 59, 48, 0.5);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .error-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .manual-link {
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .manual-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💬</div>
+        <h1>Connecting to Slack...</h1>
+        <p>Redirecting you back to the DeadLine app</p>
+        <div class="spinner"></div>
+
+        <div class="error" id="error">
+            <div class="error-title">Unable to Open App</div>
+            <div class="error-message" id="errorMessage">
+                Please make sure the DeadLine app is installed on your device.
+            </div>
+            <a href="#" class="manual-link" id="manualLink">Try Again</a>
+        </div>
+    </div>
+
+    <script>
+        // Extract OAuth parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        const error = urlParams.get('error');
+        const errorDescription = urlParams.get('error_description');
+
+        // Build the app deep link
+        let deepLink = 'deadline://oauth/callback/slack';
+
+        if (error) {
+            // OAuth error occurred
+            deepLink += `?error=${encodeURIComponent(error)}`;
+            if (errorDescription) {
+                deepLink += `&error_description=${encodeURIComponent(errorDescription)}`;
+            }
+            if (state) {
+                deepLink += `&state=${encodeURIComponent(state)}`;
+            }
+        } else if (code && state) {
+            // Successful authorization
+            deepLink += `?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+        } else if (code) {
+            // Some OAuth flows don't use state
+            deepLink += `?code=${encodeURIComponent(code)}`;
+        } else {
+            // Missing required parameters
+            showError('Invalid OAuth callback. Missing code parameter.');
+            console.error('OAuth callback missing required parameters');
+        }
+
+        // Function to show error UI
+        function showError(message) {
+            document.querySelector('.spinner').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('manualLink').href = deepLink;
+        }
+
+        // Attempt to open the app
+        function openApp() {
+            console.log('Attempting to open:', deepLink);
+
+            // Try to open the deep link
+            window.location.href = deepLink;
+
+            // Set a timeout to show error if app doesn't open
+            setTimeout(() => {
+                showError('The DeadLine app did not open automatically. Click "Try Again" to retry.');
+            }, 2500);
+        }
+
+        // Handle iOS vs Android differently
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+
+        if (code || error) {
+            if (isAndroid) {
+                // Android: Immediate redirect
+                openApp();
+            } else if (isIOS) {
+                // iOS: Try universal link first, then custom scheme
+                setTimeout(openApp, 100);
+            } else {
+                // Desktop or unknown device
+                showError('This page is designed for mobile devices. Please open this link on your phone where the DeadLine app is installed.');
+            }
+        } else {
+            showError('Invalid OAuth callback. No authorization code received.');
+        }
+
+        // Log for debugging
+        console.log('OAuth Callback Debug:', {
+            code: code ? 'present' : 'missing',
+            state: state ? 'present' : 'missing',
+            error: error || 'none',
+            errorDescription: errorDescription || 'none',
+            deepLink: deepLink,
+            userAgent: navigator.userAgent
+        });
+    </script>
+</body>
+</html>
