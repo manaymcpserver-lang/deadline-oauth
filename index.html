@@ -19,6 +19,26 @@
             text-align: center;
             padding: 2rem;
         }
+        .links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .pill {
+            border: 1px solid rgba(255,255,255,0.45);
+            border-radius: 999px;
+            padding: 0.45rem 0.8rem;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .pill:hover {
+            background: rgba(255,255,255,0.18);
+            text-decoration: none;
+        }
         .spinner {
             width: 50px;
             height: 50px;
@@ -57,7 +77,14 @@
         } else {
             // Not an OAuth callback - show a simple message or redirect
             document.addEventListener('DOMContentLoaded', function() {
-                document.querySelector('.container').innerHTML = '<h2>DeadLine OAuth Service</h2><p>This page handles OAuth callbacks for the DeadLine app.</p>';
+                document.querySelector('.container').innerHTML =
+                    '<h2>DeadLine OAuth Service</h2>' +
+                    '<p>This page handles OAuth callbacks for the DeadLine app.</p>' +
+                    '<div class="links">' +
+                    '<a class="pill" href="/privacy/">Privacy Policy</a>' +
+                    '<a class="pill" href="/support/">Support</a>' +
+                    '<a class="pill" href="/data-deletion/">Data Deletion</a>' +
+                    '</div>';
             });
         }
     </script>
