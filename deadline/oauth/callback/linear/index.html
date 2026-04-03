@@ -3,51 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadLine Redirect</title>
+    <title>DeadLine - Linear Connected</title>
     <style>
         html, body {
             margin: 0;
             width: 100%;
             height: 100%;
-            background: #020617;
-            color: #e2e8f0;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .fallback {
-            display: none;
-            height: 100%;
-            align-items: center;
+            display: flex;
             justify-content: center;
-            flex-direction: column;
-            gap: 12px;
+            align-items: center;
         }
-        a {
-            color: #93c5fd;
+        .container {
+            text-align: center;
+            padding: 2rem 1.25rem;
+            max-width: 420px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background: #3b82f6;
+            color: #fff;
             text-decoration: none;
             font-weight: 600;
         }
-        a:hover {
-            text-decoration: underline;
+        .muted {
+            margin-top: 0.75rem;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.95rem;
         }
+        .text-link {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        .text-link:hover { text-decoration: underline; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
-    <script>
-        (function redirectToApp() {
-            var params = window.location.search || "";
-            var appUrl = "deadline://oauth/callback/linear" + params;
-            window.location.replace(appUrl);
-            setTimeout(function() {
-                var fallback = document.getElementById("fallback");
-                var link = document.getElementById("link");
-                if (link) link.href = appUrl;
-                if (fallback) fallback.style.display = "flex";
-            }, 800);
-        })();
-    </script>
 </head>
 <body>
-    <div id="fallback" class="fallback">
-        <p>Open DeadLine to continue.</p>
-        <a id="link" href="#">Tap here if it doesn't open automatically</a>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Connection Complete</h2>
+        <p>Return to DeadLine to finish syncing your Linear tasks.</p>
+        <a id="open-app" class="button" href="#">Open DeadLine</a>
+        <div class="muted">
+            If nothing happens, close this page and go back to DeadLine.
+            <br />
+            <a class="text-link" href="https://deadline.codeconductor.pro/support/">Need help?</a>
+        </div>
     </div>
+    <script>
+        document.getElementById("open-app").href = "deadline://oauth/callback/linear" + window.location.search;
+    </script>
 </body>
 </html>
