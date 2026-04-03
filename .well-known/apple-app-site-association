@@ -1,18 +1,21 @@
 {
-  "applinks": {
-    "apps": [],
-    "details": [
-      {
-        "appID": "88S82P3XNZ.com.deadline.app",
-        "paths": [
-          "/deadline/oauth/callback/*"
-        ]
-      }
-    ]
-  },
   "webcredentials": {
     "apps": [
       "88S82P3XNZ.com.deadline.app"
+    ]
+  },
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "88S82P3XNZ.com.deadline.app"
+        ],
+        "components": [
+          {
+            "/": "/deadline/oauth/callback/*"
+          }
+        ]
+      }
     ]
   }
 }
