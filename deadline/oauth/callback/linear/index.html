@@ -79,9 +79,18 @@
         // Auto-attempt app return on iOS while keeping a manual fallback button.
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         if (isIOS) {
-            setTimeout(() => {
-                window.location.replace(deepLink);
-            }, 50);
+            const tryOpen = () => {
+                window.location.href = deepLink;
+            };
+            tryOpen();
+            let attempts = 0;
+            const timer = setInterval(() => {
+                attempts += 1;
+                tryOpen();
+                if (attempts >= 6) {
+                    clearInterval(timer);
+                }
+            }, 300);
         }
     </script>
 </body>
