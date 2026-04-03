@@ -11,12 +11,12 @@
             height: 100%;
         }
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
         }
         .container {
             text-align: center;
@@ -42,6 +42,9 @@
             text-decoration: none;
             font-weight: 600;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .muted {
             margin-top: 0.75rem;
             color: rgba(255,255,255,0.75);
@@ -51,8 +54,9 @@
             color: #60a5fa;
             text-decoration: none;
         }
-        .text-link:hover { text-decoration: underline; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .text-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -68,7 +72,17 @@
         </div>
     </div>
     <script>
-        document.getElementById("open-app").href = "deadline://oauth/callback/linear" + window.location.search;
+        const deepLink = 'deadline://oauth/callback/linear' + window.location.search;
+        const openAppButton = document.getElementById('open-app');
+        openAppButton.href = deepLink;
+
+        // Auto-attempt app return on iOS while keeping a manual fallback button.
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+            setTimeout(() => {
+                window.location.replace(deepLink);
+            }, 50);
+        }
     </script>
 </body>
 </html>
