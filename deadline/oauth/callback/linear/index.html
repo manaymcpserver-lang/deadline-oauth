@@ -76,13 +76,7 @@
         const openAppButton = document.getElementById('open-app');
         openAppButton.href = deepLink;
 
-        // Auto-attempt app return on iOS while keeping a manual fallback button.
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        if (isIOS) {
-            setTimeout(() => {
-                window.location.href = deepLink;
-            }, 40);
-        }
+        // Manual fallback only. Primary iOS path should complete via universal link.
     </script>
 </body>
 </html>
