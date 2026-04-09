@@ -12,7 +12,7 @@
         ],
         "components": [
           {
-            "/": "/deadline/oauth/callback/*"
+            "/": "/deadline/oauth/callback/linear*"
           }
         ]
       }
