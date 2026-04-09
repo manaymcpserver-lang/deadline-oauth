@@ -39,14 +39,6 @@
             text-decoration: underline;
         }
     </style>
-    <script>
-        const params = window.location.search;
-        const appUrl = 'deadline://oauth/callback/linear' + params;
-        window.location.href = appUrl;
-        setTimeout(function() {
-            document.getElementById('manual-link').style.display = 'block';
-        }, 2000);
-    </script>
 </head>
 <body>
     <div class="container">
@@ -55,11 +47,23 @@
         <p>Redirecting you back to the app</p>
         <div id="manual-link" style="display: none; margin-top: 1rem;">
             <p>Not redirected automatically?</p>
-            <a id="link" href="#">Click here to open DeadLine</a>
+            <a id="link" href="#">Tap here to open DeadLine</a>
         </div>
     </div>
     <script>
-        document.getElementById('link').href = 'deadline://oauth/callback/linear' + window.location.search;
+        var appUrl = 'deadline://oauth/callback/linear' + window.location.search;
+        document.getElementById('link').href = appUrl;
+
+        // Wait for the page to fully load + settle before attempting the redirect.
+        // Firing during parsing or immediately on load is silently dropped by
+        // WKWebView in ASWebAuthenticationSession.
+        window.onload = function() {
+            setTimeout(function() { window.location.href = appUrl; }, 500);
+            setTimeout(function() { window.location.href = appUrl; }, 1500);
+            setTimeout(function() {
+                document.getElementById('manual-link').style.display = 'block';
+            }, 2500);
+        };
     </script>
 </body>
 </html>
